@@ -11,6 +11,7 @@ sudo apt update && sudo apt upgrade -y
 
 1. Install Git:
 Required to clone and pull the latest code from your GitHub repository.
+![image](https://github.com/user-attachments/assets/51f52e45-8986-42a1-a075-c813c409fae0)
 
 sudo apt install git -y
  
