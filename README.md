@@ -7,14 +7,12 @@ Step 1: Installing Prerequisites
 First, open your terminal and make sure your system is up to date:
 
 sudo apt update && sudo apt upgrade -y
- 
-
+![image](https://github.com/user-attachments/assets/8cd6fd6d-6562-4c67-8c69-4270db18b4d1)
 1. Install Git:
 Required to clone and pull the latest code from your GitHub repository.
-![image](https://github.com/user-attachments/assets/51f52e45-8986-42a1-a075-c813c409fae0)
 
 sudo apt install git -y
- 
+![image](https://github.com/user-attachments/assets/6927022c-e161-49f3-9a76-6f92c2f216cf)
 Verify installation:
 
 git --version
@@ -28,19 +26,23 @@ Install rclone: Run the following command to install rclone on Ubuntu:
 sudo su
 
 curl https://rclone.org/install.sh | sudo bash
- 
+![image](https://github.com/user-attachments/assets/eb12ced0-a9ab-4205-b811-b835e94558a6)
 
 Configure rclone for Google Drive: To configure rclone with Google Drive, you need to run the following command:
 
 rclone config
- 
+![image](https://github.com/user-attachments/assets/7e3431ca-f85a-4603-8040-43faf132f966)
 
 Select "New Remote" and enter a name (e.g., gdrive).
- 
+
+![image](https://github.com/user-attachments/assets/1c44e752-9aa0-4947-afc5-745dc0f76897)
+
 Select Google Drive as the storage provider.
 
 When prompted with "Use auto config?", select No (since our machine is remote).
- 
+
+![image](https://github.com/user-attachments/assets/b8f06fdd-eccf-4394-ad82-83dbdcee1e60)
+
 Use auto config?
  * Say Y if not sure
  * Say N if you are working on a remote or headless machine
@@ -85,10 +87,13 @@ rclone authorize "drive" "eyJzY29w********* (Now paste this code which we get fr
 you will get the Authentication token for rclone 
 
 Paste the following into your remote machine --->
- 
+
+![image](https://github.com/user-attachments/assets/1b54541f-61e0-443f-abae-5ddb2740f2e2)
 
 Verify Rclone is Connected 
- 
+
+![image](https://github.com/user-attachments/assets/bf1f2589-0dfc-4440-8626-c25c19c676a4)
+
 rclone lsd gdrive:
 
 Mount Google Drive:
@@ -130,7 +135,9 @@ Once installed, verify by running:
 zip --version
 
 Slack Webhook Setup 
- 
+
+![image](https://github.com/user-attachments/assets/5ce7224a-2fd6-428e-8529-d802ed0473f3)
+
 To enable Slack notifications for backup status updates:
 
 1. Go to [Slack API](https://api.slack.com/messaging/webhooks).
@@ -257,7 +264,7 @@ Now you can run the script manually to test it. In the terminal, run:
 
 
 ./backup_script.sh
- 
+![image](https://github.com/user-attachments/assets/81bbb536-1455-49cc-a754-3f6eff3a2dae)
 
 If everything works correctly, the following messages in your terminal will be generated:
 
@@ -279,7 +286,8 @@ crontab -e
 2. Add a cron job to run the script at your desired schedule. For example, to run the backup every day at midnight:
 
 0 0 * * * /home/ubuntu/backup_script.sh
- 
+
+![image](https://github.com/user-attachments/assets/9de04942-357f-44be-b442-e9f66847b5c7)
 
 This will run the script every day at midnight. You can adjust the time and frequency based on your needs.
 
@@ -305,3 +313,11 @@ curl -X POST -H "Content-Type: application/json" -d '{"text": "Test message"}' "
 
 
 THANK YOU :)
+
+
+
+
+
+
+
+
