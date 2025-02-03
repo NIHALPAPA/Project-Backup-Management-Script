@@ -173,7 +173,7 @@ RETENTION_DAYS=7                # Keep daily backups for 7 days
 RETENTION_WEEKS=4               # Keep weekly backups for 4 weeks
 RETENTION_MONTHS=3              # Keep monthly backups for 3 months
 ENABLE_CURL=true                # Enable or disable webhook notifications
-WEBHOOK_URL="https://hooks.slack.com/services/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"
+WEBHOOK_URL="https://hooks.slack.com/services/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"
 
 # Logging Function
 log() {
@@ -183,32 +183,32 @@ log() {
 # Create Backup Directory if it doesn't exist
 mkdir -p "$BACKUP_DIR"
 
-# 1. Clone or Pull the Latest Code (Improved)
+# 1. Clone or Pull the Latest Code
 if [ ! -d "$PROJECT_FOLDER" ]; then
     log "Cloning repository..."
     git clone "$GITHUB_REPO_URL" "$PROJECT_FOLDER"
 elif [[ -d "$PROJECT_FOLDER" && -d "$PROJECT_FOLDER/.git" ]]; then
     log "Pulling latest changes..."
-    git -C "$PROJECT_FOLDER" pull origin main  # Or specify your branch
+    git -C "$PROJECT_FOLDER" pull origin main
 else
     log "Error: Project folder exists but is not a Git repository."
     exit 1
 fi
 
-# 2. Create a Timestamped Backup (Improved)
+# 2. Create a Timestamped Backup
 TIMESTAMP=$(date "+%Y-%m-%d_%H-%M-%S")
-BACKUP_FILE="$BACKUP_DIR/${PROJECT_NAME}_backup_$TIMESTAMP.tar.gz"  # Using tar.gz as an alternative
+BACKUP_FILE="$BACKUP_DIR/${PROJECT_NAME}_backup_$TIMESTAMP.tar.gz"
 
-# Exclude .git and other unwanted files/directories. Add more as needed.
+# Exclude unnecessary files
 EXCLUDE_PARAMS=("--exclude=.git" "--exclude=node_modules" "--exclude=*.tmp*")
 
-# Check for Empty project directory (After exclusions)
+# Check for empty project directory
 if [ -z "$(find "$PROJECT_FOLDER" -mindepth 1 -not -path '*/\.git*' -not -path '*/\node_modules*' -print -quit)" ]; then
     log "Error: Project folder is empty (after exclusions), nothing to backup."
     exit 1
 fi
 
-# Create Backup using tar.gz (more reliable than zip)
+# Create Backup
 log "Creating backup of $PROJECT_FOLDER..."
 if tar -czf "$BACKUP_FILE" "${EXCLUDE_PARAMS[@]}" -C "$(dirname "$PROJECT_FOLDER")" "$(basename "$PROJECT_FOLDER")"; then
     log "Backup created successfully: $BACKUP_FILE"
@@ -217,7 +217,7 @@ else
     exit 1
 fi
 
-# 3. Upload Backup to Google Drive using rclone (Improved)
+# 3. Upload Backup to Google Drive
 log "Uploading backup to Google Drive..."
 if rclone copy "$BACKUP_FILE" "$RCLONE_REMOTE:$RCLONE_FOLDER_PATH"; then
     log "Backup uploaded successfully to Google Drive."
@@ -226,7 +226,7 @@ else
     exit 1
 fi
 
-# 4. Implement Rotational Backup Deletion (Improved)
+# 4. Rotational Backup Deletion
 delete_old_backups() {
     local days=$1
     log "Deleting backups older than $days days..."
@@ -237,10 +237,12 @@ delete_old_backups "$RETENTION_DAYS"
 delete_old_backups $((RETENTION_WEEKS * 7))
 delete_old_backups $((RETENTION_MONTHS * 30))
 
-# 5. Optional Webhook Notification (Improved)
+# 5. Webhook Notification
 if [ "$ENABLE_CURL" = true ]; then
     log "Sending Slack notification..."
-    if curl -X POST -H "Content-Type: application/json" -d '{"project": "'$PROJECT_NAME'", "date": "'$TIMESTAMP'", "status": "Backup successful"}' "$WEBHOOK_URL"; then
+    PAYLOAD=$(jq -n --arg project "$PROJECT_NAME" --arg date "$TIMESTAMP" --arg status "Backup successful" --arg file "$BACKUP_FILE" '{"text": "Backup Completed Successfully", "attachments": [{"title": "Backup Details", "fields": [{"title": "Project", "value": $project, "short": true}, {"title": "Date", "value": $date, "short": true}, {"title": "Status", "value": $status, "short": true}, {"title": "Backup File", "value": $file, "short": false}]}] }')
+    
+    if curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "$WEBHOOK_URL"; then
         log "Slack notification sent successfully."
     else
         log "Warning: Webhook notification failed. Check your WEBHOOK_URL."
@@ -248,7 +250,6 @@ if [ "$ENABLE_CURL" = true ]; then
 fi
 
 log "Backup and cleanup completed successfully."
-
 
 
 3. Save the script: After pasting, press CTRL+O ENTER CTR+X to save and exit nano.
